@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Demo</title>
+
+    <link rel="stylesheet" data-th-href="@{/webjars/bootstrap/dist/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" data-th-href="@{/css/style.css}"/>
+    <script data-th-src="@{/webjars/jquery/dist/jquery.min.js}"></script>
+    <script data-th-src="@{/webjars/bootstrap/dist/js/bootstrap.min.js}"></script>
+    <script data-th-src="@{/esp/history.js}"></script>
+</head>
+<body>
+<div class="container-fluid" style="margin-top: 20px">
+
+    <div class="row">
+        <div class="col-md-6"> Plain Links
+            <ul class="nav nav-pills">
+                <li><a data-th-href="@{/}"> / </a></li>
+                <li><a data-th-href="@{/index}"> /index (redirecting to /)</a></li>
+                <li><a data-th-href="@{/page1}">Page 1</a></li>
+                <li><a data-th-href="@{/page2}">Page 2</a></li>
+                <li><a data-th-href="@{/page3}">Page 3</a></li>
+            </ul>
+        </div>
+        <div class="col-md-6"> Links with AJAX-Magic disabled (<code>data-esp-ajax="false"</code>)
+            <ul class="nav nav-pills">
+                <li><a data-esp-ajax="false" data-th-href="@{/}"> / </a></li>
+                <li><a data-esp-ajax="false" data-th-href="@{/index}"> /index (redirecting to /)</a></li>
+                <li><a data-esp-ajax="false" data-th-href="@{/page1}">Page 1</a></li>
+                <li><a data-esp-ajax="false" data-th-href="@{/page2}">Page 2</a></li>
+                <li><a data-esp-ajax="false" data-th-href="@{/page3}">Page 3</a></li>
+            </ul>
+        </div>
+        <div class="col-md-6"> Links with multiple result fragments
+            <ul class="nav nav-pills">
+                <li><a data-th-href="@{/multi1}">Multi 1</a></li>
+                <li><a data-th-href="@{/multi2}">Multi 2</a></li>
+                <li><a data-th-href="@{/multi3}">Multi 3</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="alert alert-info" style="margin-top:20px"
+                 data-th-text="'Requested Page: ' + ${view}"></div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">Website content: (<code>id="content"</code>)</div>
+                <div class="panel-body" id="content">
+                    <div data-th-include="${view} :: content" data-th-remove="tag">
+
+                        This is content form default template!
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">Other content: (<code>id="otherContent"</code>)</div>
+                <div class="panel-body" id="otherContent">
+                    <i>Nothing here, yet?</i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
