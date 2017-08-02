@@ -1,6 +1,6 @@
 # esp
 
-[![](https://jitpack.io/v/eu.sourceway/esp.svg)](https://jitpack.io/#eu.sourceway/esp)
+[![](https://jitpack.io/v/eu.sourceway.esp/library.svg)](https://jitpack.io/#eu.sourceway.esp/library)
 [![Build Status](https://travis-ci.org/sourceway/esp.svg?branch=develop)](https://travis-ci.org/sourceway/esp)
 
 ### Usage
@@ -15,11 +15,11 @@ Add the jitpack repository
 </repositories>
 ```
 
-Add dependency
+Add dependency (for available versions see https://jitpack.io/#eu.sourceway.esp/library)
 ```xml
 <dependency>
-    <groupId>eu.sourceway</groupId>
-    <artifactId>esp</artifactId>
+    <groupId>eu.sourceway.esp</groupId>
+    <artifactId>library</artifactId>
     <version>develop-SNAPSHOT</version>
 </dependency>
 ```
