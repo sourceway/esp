@@ -1,6 +1,7 @@
 # esp
 
 [![](https://jitpack.io/v/eu.sourceway/esp.svg)](https://jitpack.io/#eu.sourceway/esp)
+[![Build Status](https://travis-ci.org/sourceway/esp.svg?branch=develop)](https://travis-ci.org/sourceway/esp)
 
 ### Usage
 
