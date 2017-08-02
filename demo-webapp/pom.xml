@@ -28,7 +28,7 @@
 
         <dependency>
             <groupId>eu.sourceway</groupId>
-            <artifactId>esp-library</artifactId>
+            <artifactId>library</artifactId>
             <version>${project.version}</version>
         </dependency>
 
