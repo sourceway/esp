@@ -59,7 +59,7 @@ Setup your layout
 <!-- by default esp uses #content as selector to place new content -->
 <!-- to see how you can change this selector see below -->
 <div id="content">
-    <div data-th-include="${view} :: content" data-th-remove="tag">
+    <div data-th-replace="${view} :: content">
         This div will be replaced by the
     </div>
 </div>
