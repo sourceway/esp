@@ -196,9 +196,6 @@
 
     $(document).on("click", "a:not([data-esp-ajax='false']):internal", function (e) {
         var href = $(this).attr('href');
-        if (!('pushState' in window.history)) {
-            return true;
-        }
         if (href.indexOf('#') === 0) {
             return true;
         }
@@ -210,10 +207,8 @@
         return false;
     });
 
-    if ('replaceState' in window.history) {
-        var currentLocation = document.location.toString();
-        history.replaceState({url: currentLocation}, null, currentLocation);
-    }
+    var currentLocation = document.location.toString();
+    history.replaceState({url: currentLocation}, null, currentLocation);
 
     $(window).on("popstate", function (e) {
         if (history.state !== null) {
