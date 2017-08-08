@@ -1,4 +1,9 @@
 (function ($) {
+    if (!('pushState' in window.history)) {
+        return true;
+    }
+    var hasPushState = 'pushState' in window.history;
+
     var defaults = {
         externalUrlPattern: /^(\w+:)?\/\//,
         contentSelector: "#content",
@@ -15,6 +20,11 @@
             config = $.extend({}, defaults, options);
         }
     };
+
+    if (!hasPushState) {
+        // Session history management not available, ESP will do nothing.
+        return;
+    }
 
     function isValid(el, tagName, attribute) {
         return el.tagName.toUpperCase() === tagName.toUpperCase() && $(el).attr(attribute) !== undefined;
