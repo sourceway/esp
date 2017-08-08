@@ -189,8 +189,8 @@
         if (!('pushState' in window.history)) {
             return true;
         }
-        if ('#' === href) {
-            return false;
+        if (href.indexOf('#') === 0) {
+            return true;
         }
         // Ensure middle, control and command clicks act normally
         if (e.which === 2 || e.metaKey || e.ctrlKey) {
