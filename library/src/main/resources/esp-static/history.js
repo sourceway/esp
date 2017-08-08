@@ -52,7 +52,7 @@
         return false;
     };
 
-    function loadContent(target, url) {
+    function loadContent(url) {
         var $ajax = $.ajax({
             url: url,
             dataType: "html",
@@ -61,23 +61,10 @@
             },
             beforeSend: config.beforeSendCallback
         }).fail(function (xhr) {
-            $(target).html(xhr.responseText);
+            setContent(url, xhr.responseText);
             updateCsrf(xhr);
         }).done(function (data, textStatus, request) {
-            $("<div>" + data + "</div>").find("div[data-esp-target-selector]").each(function () {
-                var $this = $(this);
-                var selector = $this.attr("data-esp-target-selector");
-                if (selector === '$default$') {
-                    $(target).html($this.html());
-                } else {
-                    $(selector).html($this.html());
-                }
-            });
-
-            var redirectedLocation = request.getResponseHeader("X-ESP-CURRENT-URL");
-            if (history.state.url !== redirectedLocation) {
-                history.replaceState({url: redirectedLocation}, null, redirectedLocation);
-            }
+            setContent(request.getResponseHeader("X-ESP-CURRENT-URL"), data);
             updateCsrf(request);
         });
         if (typeof(config.alwaysCallback) === "function") {
@@ -91,24 +78,24 @@
         }
     }
 
+    function setContent(url, data) {
+        history.pushState({url: url}, null, url);
+
+        $("<div>" + data + "</div>").find("div[data-esp-target-selector]").each(function () {
+            var $this = $(this);
+            var selector = $this.attr("data-esp-target-selector");
+            if (selector === '$default$') {
+                $(config.contentSelector).html($this.html());
+            } else {
+                $(selector).html($this.html());
+            }
+        });
+    }
+
     function updateCsrf(request) {
         var csrfToken = request.getResponseHeader("X-ESP-CSRF-TOKEN");
         if (csrfToken !== undefined) {
             $("input[name=_csrf]").val(csrfToken);
-        }
-    }
-
-    function goToUrl(href, content) {
-        if ('pushState' in window.history) {
-            history.pushState({url: href}, null, href);
-
-            if (content === undefined) {
-                loadContent(config.contentSelector, href);
-            } else {
-                $(config.contentSelector).html(content);
-            }
-        } else {
-            window.location = href;
         }
     }
 
@@ -142,7 +129,7 @@
         }
     }
 
-    function formSubmit(form, doneHandler, failHandler) {
+    function formSubmit(form) {
         var targetUrl = form.attr('action');
         var formMethod = form.attr('method');
         if (formMethod === undefined) {
@@ -162,13 +149,12 @@
                 'X-ESP-AJAX-REQUEST': true
             },
             beforeSend: config.beforeSendCallback
+        }).done(function (data, textStatus, request) {
+            setContent(request.getResponseHeader("X-ESP-CURRENT-URL"), data);
+        }).fail(function (e) {
+            setContent(targetUrl, e.responseText);
         });
-        if (typeof(failHandler) === "function") {
-            $ajax.fail(failHandler);
-        }
-        if (typeof(doneHandler) === "function") {
-            $ajax.done(doneHandler);
-        }
+
         if (typeof(config.alwaysCallback) === "function") {
             $ajax.always(config.alwaysCallback);
         }
@@ -182,15 +168,7 @@
 
     $(document).on("submit", "form:not([data-esp-ajax='false']):internal", function (e) {
         e.preventDefault();
-
-        var form = $(e.target);
-        var targetUrl = form.attr('action');
-        formSubmit(form, function (data, textStatus, request) {
-            goToUrl(request.getResponseHeader("X-ESP-CURRENT-URL"), data);
-        }, function (e) {
-            goToUrl(targetUrl, e.responseText);
-        });
-
+        formSubmit($(e.target));
         return false;
     });
 
@@ -203,7 +181,7 @@
         if (e.which === 2 || e.metaKey || e.ctrlKey) {
             return true;
         }
-        goToUrl(href);
+        loadContent(href);
         return false;
     });
 
@@ -212,7 +190,7 @@
 
     $(window).on("popstate", function (e) {
         if (history.state !== null) {
-            loadContent(config.contentSelector, history.state.url);
+            loadContent(history.state.url);
         }
     });
 }(jQuery));
