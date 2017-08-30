@@ -66,6 +66,7 @@ Setup your layout
 
 <!-- optional: configure js part -->
 <script>
+    /*<![CDATA[*/
     $(document).ready(function () {
         ESP.options({
             // regex pattern to tweak external url detection
@@ -82,6 +83,7 @@ Setup your layout
             doneCallback: null
         });
     });
+    /*]]>*/
 </script>
 </body>
 </html>
