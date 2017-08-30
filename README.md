@@ -24,13 +24,6 @@ Add dependency (for available versions see https://jitpack.io/#eu.sourceway.esp/
 </dependency>
 ```
 
-Add the script to your layout
-```xml
-<head>
-    <script data-th-src="@{/esp/history.js}"></script>
-</head>
-```
-
 Configure the tempalte processor
 ```
 esp.content-fragment-name=content     # name of the thymeleaf fragment to include in the contetn
