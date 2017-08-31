@@ -1,7 +1,7 @@
 package eu.sourceway.esp.configuration;
 
 import eu.sourceway.esp.handler.MultiAjaxViewHandlerMethodReturnValueHandler;
-import eu.sourceway.esp.interceptor.ThymeleafLayoutInterceptor;
+import eu.sourceway.esp.interceptor.EspAjaxLayoutInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
@@ -28,20 +28,20 @@ public class EspAutoConfiguration {
 	}
 
 	@Bean
-	@ConditionalOnMissingBean(ThymeleafLayoutInterceptor.class)
-	public ThymeleafLayoutInterceptor thymeleafLayoutInterceptor(EspProperties espProperties) {
-		return new ThymeleafLayoutInterceptor(espProperties);
+	@ConditionalOnMissingBean(EspAjaxLayoutInterceptor.class)
+	public EspAjaxLayoutInterceptor thymeleafLayoutInterceptor(EspProperties espProperties) {
+		return new EspAjaxLayoutInterceptor(espProperties);
 	}
 
 	@Configuration
 	public class WebMvcConfig extends WebMvcConfigurerAdapter {
 
-		private final ThymeleafLayoutInterceptor thymeleafLayoutInterceptor;
+		private final EspAjaxLayoutInterceptor espAjaxLayoutInterceptor;
 		private final EspProperties espProperties;
 
 		@Autowired
-		public WebMvcConfig(ThymeleafLayoutInterceptor thymeleafLayoutInterceptor, EspProperties espProperties) {
-			this.thymeleafLayoutInterceptor = thymeleafLayoutInterceptor;
+		public WebMvcConfig(EspAjaxLayoutInterceptor espAjaxLayoutInterceptor, EspProperties espProperties) {
+			this.espAjaxLayoutInterceptor = espAjaxLayoutInterceptor;
 			this.espProperties = espProperties;
 		}
 
@@ -58,7 +58,7 @@ public class EspAutoConfiguration {
 
 		@Override
 		public void addInterceptors(InterceptorRegistry registry) {
-			registry.addInterceptor(thymeleafLayoutInterceptor);
+			registry.addInterceptor(espAjaxLayoutInterceptor);
 		}
 	}
 
@@ -73,7 +73,7 @@ public class EspAutoConfiguration {
 
 		private InternalLayoutResolver() {
 			setResourceResolver(new ClassLoaderResourceResolver());
-			setResolvablePatterns(singleton(ThymeleafLayoutInterceptor.ESP_AJAX_LAYOUT));
+			setResolvablePatterns(singleton(EspAjaxLayoutInterceptor.ESP_AJAX_LAYOUT));
 		}
 
 		@Override

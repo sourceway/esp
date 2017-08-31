@@ -9,13 +9,13 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class ThymeleafLayoutInterceptor extends HandlerInterceptorAdapter {
+public class EspAjaxLayoutInterceptor extends HandlerInterceptorAdapter {
 
     public static final String ESP_AJAX_LAYOUT = "esp:ajax";
 
     private final EspProperties properties;
 
-    public ThymeleafLayoutInterceptor(EspProperties properties) {
+    public EspAjaxLayoutInterceptor(EspProperties properties) {
         this.properties = properties;
     }
 
