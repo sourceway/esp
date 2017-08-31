@@ -52,7 +52,7 @@
         return false;
     };
 
-    function loadContent(url) {
+    function loadContent(url, updateHistory) {
         var $ajax = $.ajax({
             url: url,
             dataType: "html",
@@ -61,10 +61,10 @@
             },
             beforeSend: config.beforeSendCallback
         }).fail(function (xhr) {
-            setContent(url, xhr.responseText);
+            setContent(url, xhr.responseText, updateHistory);
             updateCsrf(xhr);
         }).done(function (data, textStatus, request) {
-            setContent(request.getResponseHeader("X-ESP-CURRENT-URL"), data);
+            setContent(request.getResponseHeader("X-ESP-CURRENT-URL"), data, updateHistory);
             updateCsrf(request);
         });
         if (typeof(config.alwaysCallback) === "function") {
@@ -78,8 +78,10 @@
         }
     }
 
-    function setContent(url, data) {
-        history.pushState({url: url}, null, url);
+    function setContent(url, data, updateHistory) {
+    	if (updateHistory) {
+            history.pushState({url: url}, null, url);
+        }
 
         $("<div>" + data + "</div>").find("div[data-esp-target-selector]").each(function () {
             var $this = $(this);
@@ -150,9 +152,9 @@
             },
             beforeSend: config.beforeSendCallback
         }).done(function (data, textStatus, request) {
-            setContent(request.getResponseHeader("X-ESP-CURRENT-URL"), data);
+            setContent(request.getResponseHeader("X-ESP-CURRENT-URL"), data, true);
         }).fail(function (e) {
-            setContent(targetUrl, e.responseText);
+            setContent(targetUrl, e.responseText, true);
         });
 
         if (typeof(config.alwaysCallback) === "function") {
@@ -181,7 +183,7 @@
         if (e.which === 2 || e.metaKey || e.ctrlKey) {
             return true;
         }
-        loadContent(href);
+        loadContent(href, true);
         return false;
     });
 
@@ -190,7 +192,7 @@
 
     $(window).on("popstate", function (e) {
         if (history.state !== null) {
-            loadContent(history.state.url);
+            loadContent(history.state.url, false);
         }
     });
 }(jQuery));
