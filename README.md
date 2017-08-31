@@ -123,12 +123,12 @@ Create links
 
 Forms can be used too
 ```html
-<!-- this for is posted via ajax -->
+<!-- this form is posted via ajax -->
 <form method="post" data-th-action="@{/formtarget}">
     <!-- file uploads are supported -->
 </form>
 
-<!-- this for is not handled by this library -->
+<!-- this form is not handled by this library -->
 <form method="post" data-esp-ajax="false" data-th-action="@{/formtarget}">
 
 </form>
