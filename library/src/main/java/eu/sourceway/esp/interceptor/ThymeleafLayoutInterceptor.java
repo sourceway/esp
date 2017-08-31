@@ -31,6 +31,11 @@ public class ThymeleafLayoutInterceptor extends HandlerInterceptorAdapter {
 
         if (isAjaxRequest(request)) {
             modelAndView.setViewName(ESP_AJAX_LAYOUT);
+            // Unfortunately we have to set the Cache-Control header
+            // due to Chrome only using the cached response
+            // if we come back to our page from an external site
+            // see: https://stackoverflow.com/a/8568402/1659588
+            response.setHeader("Cache-Control", "no-store");
             response.addHeader("X-ESP-CURRENT-URL", buildCurrentUrl(request));
             if (hasCsrfToken()) {
                 CsrfToken csrfToken = (CsrfToken) request.getAttribute("_csrf");
