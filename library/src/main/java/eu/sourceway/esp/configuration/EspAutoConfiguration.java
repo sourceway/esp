@@ -69,7 +69,7 @@ public class EspAutoConfiguration {
 
 	private static class InternalLayoutResolver extends TemplateResolver {
 
-		private static final String ESP_AJAX_TEMPLATE = "esp-templates/empty_ajax_template.html";
+		private static final String ESP_AJAX_TEMPLATE = "esp-templates/ajax_template.html";
 
 		private InternalLayoutResolver() {
 			setResourceResolver(new ClassLoaderResourceResolver());
