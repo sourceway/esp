@@ -1,23 +1,25 @@
 package eu.sourceway.esp.configuration;
 
-import eu.sourceway.esp.handler.MultiAjaxViewHandlerMethodReturnValueHandler;
-import eu.sourceway.esp.interceptor.EspAjaxLayoutInterceptor;
+import static java.util.Collections.singleton;
+
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.thymeleaf.TemplateProcessingParameters;
-import org.thymeleaf.resourceresolver.ClassLoaderResourceResolver;
-import org.thymeleaf.spring4.SpringTemplateEngine;
-import org.thymeleaf.templateresolver.TemplateResolver;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.thymeleaf.IEngineConfiguration;
+import org.thymeleaf.spring5.SpringTemplateEngine;
+import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
 
-import java.util.List;
-
-import static java.util.Collections.singleton;
+import eu.sourceway.esp.handler.MultiAjaxViewHandlerMethodReturnValueHandler;
+import eu.sourceway.esp.interceptor.EspAjaxLayoutInterceptor;
 
 @Configuration
 public class EspAutoConfiguration {
