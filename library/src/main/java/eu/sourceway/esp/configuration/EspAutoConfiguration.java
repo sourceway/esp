@@ -9,11 +9,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.thymeleaf.TemplateProcessingParameters;
 import org.thymeleaf.resourceresolver.ClassLoaderResourceResolver;
 import org.thymeleaf.spring4.SpringTemplateEngine;
 import org.thymeleaf.templateresolver.TemplateResolver;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.List;
 
@@ -34,7 +34,7 @@ public class EspAutoConfiguration {
 	}
 
 	@Configuration
-	public class WebMvcConfig extends WebMvcConfigurerAdapter {
+	public class WebMvcConfig implements WebMvcConfigurer {
 
 		private final EspAjaxLayoutInterceptor espAjaxLayoutInterceptor;
 		private final EspProperties espProperties;
