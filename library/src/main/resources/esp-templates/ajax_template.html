@@ -1,6 +1,6 @@
 <!--/* this layout is required for ajax loading */-->
 <div data-th-attr="data-esp-target-selector='$default$'">
-    <div data-th-replace="${#vars.get(ESP_VIEW_VAR_NAME)} :: ${ESP_FRAGMENT_NAME}"></div>
+    <div data-th-replace="${#ctx.getVariable(ESP_VIEW_VAR_NAME)} :: ${ESP_FRAGMENT_NAME}"></div>
 </div>
 <div data-th-each="ajaxView : ${ESP_VIEW_REGISTRY}"
      data-th-attr="data-esp-target-selector=${ajaxView.key}">
