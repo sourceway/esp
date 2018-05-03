@@ -63,21 +63,31 @@ public class EspAutoConfiguration {
 	}
 
 	@Autowired
-	public void registerInternalLayoutResolver(SpringTemplateEngine templateEngine) {
-		templateEngine.addTemplateResolver(new InternalLayoutResolver());
+	public void registerInternalLayoutResolver(
+	        ApplicationContext applicationContext,
+	        SpringTemplateEngine templateEngine) {
+		templateEngine.addTemplateResolver(
+		    new InternalLayoutResolver(applicationContext));
 	}
 
-	private static class InternalLayoutResolver extends TemplateResolver {
+	private static class InternalLayoutResolver
+	        extends SpringResourceTemplateResolver {
 
-		private static final String ESP_AJAX_TEMPLATE = "esp-templates/ajax_template.html";
+		private static final String ESP_AJAX_TEMPLATE =
+		        "classpath:/esp-templates/ajax_template.html";
 
-		private InternalLayoutResolver() {
-			setResourceResolver(new ClassLoaderResourceResolver());
-			setResolvablePatterns(singleton(EspAjaxLayoutInterceptor.ESP_AJAX_LAYOUT));
+		private InternalLayoutResolver(ApplicationContext applicationContext) {
+			setApplicationContext(applicationContext);
+			setResolvablePatterns(
+			    singleton(EspAjaxLayoutInterceptor.ESP_AJAX_LAYOUT));
 		}
 
 		@Override
-		protected String computeResourceName(TemplateProcessingParameters params) {
+		protected String computeResourceName(IEngineConfiguration configuration,
+		        String ownerTemplate, String template, String prefix,
+		        String suffix, boolean forceSuffix,
+		        Map<String, String> templateAliases,
+		        Map<String, Object> templateResolutionAttributes) {
 			return ESP_AJAX_TEMPLATE;
 		}
 	}
