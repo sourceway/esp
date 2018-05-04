@@ -8,7 +8,7 @@
     <parent>
         <groupId>eu.sourceway</groupId>
         <artifactId>esp-parent</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>0.1.0</version>
         <relativePath>..</relativePath>
     </parent>
 
@@ -28,13 +28,13 @@
 
         <dependency>
             <groupId>eu.sourceway</groupId>
-            <artifactId>esp-library</artifactId>
+            <artifactId>library</artifactId>
             <version>${project.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.webjars</groupId>
-            <artifactId>webjars-locator</artifactId>
+            <artifactId>webjars-locator-core</artifactId>
         </dependency>
         <dependency>
             <groupId>org.webjars.bower</groupId>

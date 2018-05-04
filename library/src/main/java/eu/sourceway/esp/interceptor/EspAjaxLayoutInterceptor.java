@@ -9,13 +9,13 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class ThymeleafLayoutInterceptor extends HandlerInterceptorAdapter {
+public class EspAjaxLayoutInterceptor extends HandlerInterceptorAdapter {
 
     public static final String ESP_AJAX_LAYOUT = "esp:ajax";
 
     private final EspProperties properties;
 
-    public ThymeleafLayoutInterceptor(EspProperties properties) {
+    public EspAjaxLayoutInterceptor(EspProperties properties) {
         this.properties = properties;
     }
 
@@ -31,6 +31,11 @@ public class ThymeleafLayoutInterceptor extends HandlerInterceptorAdapter {
 
         if (isAjaxRequest(request)) {
             modelAndView.setViewName(ESP_AJAX_LAYOUT);
+            // Unfortunately we have to set the Cache-Control header
+            // due to Chrome only using the cached response
+            // if we come back to our page from an external site
+            // see: https://stackoverflow.com/a/8568402/1659588
+            response.setHeader("Cache-Control", "no-store");
             response.addHeader("X-ESP-CURRENT-URL", buildCurrentUrl(request));
             if (hasCsrfToken()) {
                 CsrfToken csrfToken = (CsrfToken) request.getAttribute("_csrf");

@@ -1,4 +1,9 @@
 (function ($) {
+    if (!('pushState' in window.history)) {
+        return true;
+    }
+    var hasPushState = 'pushState' in window.history;
+
     var defaults = {
         externalUrlPattern: /^(\w+:)?\/\//,
         contentSelector: "#content",
@@ -15,6 +20,11 @@
             config = $.extend({}, defaults, options);
         }
     };
+
+    if (!hasPushState) {
+        // Session history management not available, ESP will do nothing.
+        return;
+    }
 
     function isValid(el, tagName, attribute) {
         return el.tagName.toUpperCase() === tagName.toUpperCase() && $(el).attr(attribute) !== undefined;
@@ -42,7 +52,7 @@
         return false;
     };
 
-    function loadContent(target, url) {
+    function loadContent(url, updateHistory) {
         var $ajax = $.ajax({
             url: url,
             dataType: "html",
@@ -51,23 +61,10 @@
             },
             beforeSend: config.beforeSendCallback
         }).fail(function (xhr) {
-            $(target).html(xhr.responseText);
+            setContent(url, xhr.responseText, updateHistory);
             updateCsrf(xhr);
         }).done(function (data, textStatus, request) {
-            $("<div>" + data + "</div>").find("div[data-esp-target-selector]").each(function () {
-                var $this = $(this);
-                var selector = $this.attr("data-esp-target-selector");
-                if (selector === '$default$') {
-                    $(target).html($this.html());
-                } else {
-                    $(selector).html($this.html());
-                }
-            });
-
-            var redirectedLocation = request.getResponseHeader("X-ESP-CURRENT-URL");
-            if (history.state.url !== redirectedLocation) {
-                history.replaceState({url: redirectedLocation}, null, redirectedLocation);
-            }
+            setContent(request.getResponseHeader("X-ESP-CURRENT-URL"), data, updateHistory);
             updateCsrf(request);
         });
         if (typeof(config.alwaysCallback) === "function") {
@@ -81,24 +78,26 @@
         }
     }
 
+    function setContent(url, data, updateHistory) {
+    	if (updateHistory) {
+            history.pushState({url: url}, null, url);
+        }
+
+        $("<div>" + data + "</div>").find("div[data-esp-target-selector]").each(function () {
+            var $this = $(this);
+            var selector = $this.attr("data-esp-target-selector");
+            if (selector === '$default$') {
+                $(config.contentSelector).html($this.html());
+            } else {
+                $(selector).html($this.html());
+            }
+        });
+    }
+
     function updateCsrf(request) {
         var csrfToken = request.getResponseHeader("X-ESP-CSRF-TOKEN");
         if (csrfToken !== undefined) {
             $("input[name=_csrf]").val(csrfToken);
-        }
-    }
-
-    function goToUrl(href, content) {
-        if ('pushState' in window.history) {
-            history.pushState({url: href}, null, href);
-
-            if (content === undefined) {
-                loadContent(config.contentSelector, href);
-            } else {
-                $(config.contentSelector).html(content);
-            }
-        } else {
-            window.location = href;
         }
     }
 
@@ -132,7 +131,7 @@
         }
     }
 
-    function formSubmit(form, doneHandler, failHandler) {
+    function formSubmit(form) {
         var targetUrl = form.attr('action');
         var formMethod = form.attr('method');
         if (formMethod === undefined) {
@@ -152,13 +151,12 @@
                 'X-ESP-AJAX-REQUEST': true
             },
             beforeSend: config.beforeSendCallback
+        }).done(function (data, textStatus, request) {
+            setContent(request.getResponseHeader("X-ESP-CURRENT-URL"), data, true);
+        }).fail(function (e) {
+            setContent(targetUrl, e.responseText, true);
         });
-        if (typeof(failHandler) === "function") {
-            $ajax.fail(failHandler);
-        }
-        if (typeof(doneHandler) === "function") {
-            $ajax.done(doneHandler);
-        }
+
         if (typeof(config.alwaysCallback) === "function") {
             $ajax.always(config.alwaysCallback);
         }
@@ -172,42 +170,29 @@
 
     $(document).on("submit", "form:not([data-esp-ajax='false']):internal", function (e) {
         e.preventDefault();
-
-        var form = $(e.target);
-        var targetUrl = form.attr('action');
-        formSubmit(form, function (data, textStatus, request) {
-            goToUrl(request.getResponseHeader("X-ESP-CURRENT-URL"), data);
-        }, function (e) {
-            goToUrl(targetUrl, e.responseText);
-        });
-
+        formSubmit($(e.target));
         return false;
     });
 
     $(document).on("click", "a:not([data-esp-ajax='false']):internal", function (e) {
         var href = $(this).attr('href');
-        if (!('pushState' in window.history)) {
+        if (href.indexOf('#') === 0) {
             return true;
-        }
-        if ('#' === href) {
-            return false;
         }
         // Ensure middle, control and command clicks act normally
         if (e.which === 2 || e.metaKey || e.ctrlKey) {
             return true;
         }
-        goToUrl(href);
+        loadContent(href, true);
         return false;
     });
 
-    if ('replaceState' in window.history) {
-        var currentLocation = document.location.toString();
-        history.replaceState({url: currentLocation}, null, currentLocation);
-    }
+    var currentLocation = document.location.toString();
+    history.replaceState({url: currentLocation}, null, currentLocation);
 
     $(window).on("popstate", function (e) {
         if (history.state !== null) {
-            loadContent(config.contentSelector, history.state.url);
+            loadContent(history.state.url, false);
         }
     });
 }(jQuery));
